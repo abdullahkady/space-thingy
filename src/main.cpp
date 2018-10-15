@@ -21,6 +21,8 @@ double spaceshipX = 200, spaceshipY = 70;
 double missileX = 0, missileY = -100; // To be invisible by default
 double enemyShotX = 0, enemyShotY = -100;
 double enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
+double speedPowerUpX = 0, speedPowerUpY = -100, speedPowerUpTimer = 0;
+double playerSpeed = 4;
 bool enemyIsHit = false;
 //----------------
 
@@ -31,6 +33,19 @@ void writeToScreen(std::string text, float x, float y)
 
   for (int i = 0; i < text.length(); i++)
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
+}
+
+void drawPowerUps()
+{
+  // Speeds the player movement with a random factor, for a random period.
+  // Thrusts turn green during boost time
+  glPushMatrix();
+  glPointSize(10.0);
+  glColor3f(0, 1, 0);
+  glBegin(GL_POINTS);
+  glVertex2f(speedPowerUpX, speedPowerUpY);
+  glEnd();
+  glPopMatrix();
 }
 
 void drawBackground()
@@ -129,7 +144,8 @@ void drawSpaceship()
 
   // EXHAUST
   glBegin(GL_POINTS);
-  glColor3f(1, 0, 0);
+  // Color the exhaust dynamically dependong on boost state
+  glColor3f(speedPowerUpTimer > 0 ? 0 : 1, speedPowerUpTimer > 0 ? 1 : 0, 0);
   glVertex2f(spaceshipX - 10, spaceshipY - 30);
   glVertex2f(spaceshipX + 10, spaceshipY - 30);
   glEnd();
@@ -262,6 +278,8 @@ void resetGame()
   enemyIsHit = false;
   bg1Y = 0;
   bg2Y = 0;
+  speedPowerUpX = 0, speedPowerUpY = -100, speedPowerUpTimer = 0;
+  playerSpeed = 4;
   gameOver = false;
 }
 
@@ -271,11 +289,11 @@ void onKey(unsigned char key, int x, int y)
   {
   case 'a':
     if (spaceshipX > 40)
-      spaceshipX -= 4;
+      spaceshipX -= playerSpeed;
     break;
   case 'd':
     if (spaceshipX < 460)
-      spaceshipX += 4;
+      spaceshipX += playerSpeed;
     break;
   case 'r':
     if (gameOver)
@@ -313,6 +331,11 @@ void dropTheBall() // Classic .. ¯\_(ツ)_/¯
 
 void startInterval(int val)
 {
+  if (rand() % 50 < 5 && speedPowerUpY == -100 && speedPowerUpTimer <= 0)
+  {
+    speedPowerUpX = 150 + rand() % 300;
+    speedPowerUpY = 300 + rand() % 150;
+  }
   if (enemyShotY == -100) // Don't draw the shot if it's already being shot.
     dropTheBall();
   glutTimerFunc((rand() % 2) * 1000, startInterval, 0);
@@ -347,6 +370,7 @@ void displayCallback(void)
     drawEnemy();
     drawEnemyShot();
     drawHealthBar();
+    drawPowerUps();
   }
   else
   {
@@ -361,8 +385,33 @@ void displayCallback(void)
   glFlush();
 }
 
+void handlePowerUpsCollision()
+{
+  speedPowerUpY = (speedPowerUpY <= 0) ? -100 : speedPowerUpY - 0.1;
+  if (speedPowerUpY != -100)
+  {
+    if (abs(speedPowerUpY - spaceshipY) < 20 && abs(speedPowerUpX - spaceshipX) < 40)
+    {
+      playerSpeed = 4 + rand() % 10;
+      speedPowerUpTimer = 5 + rand() % 10;
+      speedPowerUpY = -100;
+    }
+  }
+
+  if (playerSpeed != 4)
+  {
+    speedPowerUpTimer -= 0.001;
+    if (speedPowerUpTimer <= 0)
+    {
+      speedPowerUpTimer = 0;
+      playerSpeed = 4;
+    }
+  }
+}
+
 void idleCallback()
 {
+  handlePowerUpsCollision();
 
   bg1Y = (bg1Y >= 500) ? 0 : bg1Y + 0.1;
   bg2Y = (bg2Y >= 500) ? 0 : bg2Y + 0.1;
