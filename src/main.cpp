@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <sstream>
 //-----------------
 
 //	Methods Signatures
@@ -19,9 +20,18 @@ double bg2Y = 0;
 double spaceshipX = 200, spaceshipY = 70;
 double missileX = 0, missileY = -100; // To be invisible by default
 double enemyShotX = 0, enemyShotY = -100;
-double enemyX = 0, enemyY = 450, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
+double enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
 bool enemyIsHit = false;
 //----------------
+
+void writeToScreen(std::string text, float x, float y)
+{
+  glColor3f(0.0, 0.0, 0.0);
+  glRasterPos3f(x, y, 0);
+
+  for (int i = 0; i < text.length(); i++)
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
+}
 
 void drawBackground()
 {
@@ -57,6 +67,35 @@ void drawBackground()
   //   glVertex2f(rand() % 800, rand() % 500);
   //   glEnd();
   // }
+  glPopMatrix();
+}
+
+void drawHealthBar()
+{
+  glPushMatrix();
+  // Workaround for to_string() error.
+  // https://stackoverflow.com/a/12975966
+  std::ostringstream tmp;
+  tmp << enemyHealth;
+
+  writeToScreen("Enemy health: " + tmp.str() + "\%", 10, 450);
+  // The damage dealt (red base bar)
+  glBegin(GL_QUADS);
+  glColor3f(1, 0, 0);
+  glVertex2f(10, 470);
+  glVertex2f(10 + 100, 470);
+  glVertex2f(10 + 100, 490);
+  glVertex2f(10, 490);
+  glEnd();
+
+  // Remaining health (green bar)
+  glBegin(GL_QUADS);
+  glColor3f(0, 1, 0);
+  glVertex2f(10, 470);
+  glVertex2f(10 + enemyHealth, 470);
+  glVertex2f(10 + enemyHealth, 490);
+  glVertex2f(10, 490);
+  glEnd();
   glPopMatrix();
 }
 
@@ -219,7 +258,7 @@ void resetGame()
   spaceshipX = 200, spaceshipY = 70;
   missileX = 0, missileY = -100;
   enemyShotX = 0, enemyShotY = -100;
-  enemyX = 0, enemyY = 450, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
+  enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
   enemyIsHit = false;
   gameOver = false;
 }
@@ -295,15 +334,6 @@ int main(int argc, char **argr)
   return 0;
 }
 
-void writeToScreen(std::string text)
-{
-  glColor3f(0.0, 0.0, 0.0);
-  glRasterPos3f(200, 200, 0);
-
-  for (int i = 0; i < text.length(); i++)
-    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
-}
-
 void displayCallback(void)
 {
   glClear(GL_COLOR_BUFFER_BIT);
@@ -314,9 +344,10 @@ void displayCallback(void)
     drawMissile();
     drawEnemy();
     drawEnemyShot();
+    drawHealthBar();
   }
   else
-    writeToScreen("Press R to restart");
+    writeToScreen("Press R to restart", 200, 200);
 
   glFlush();
 }
@@ -345,12 +376,8 @@ void idleCallback()
         missileY = -100;
         enemyIsHit = true;
         enemyHealth -= 10;
-        std::cout << "ENEMY HIT!"
-                  << "CURRENT HEALTH: " << enemyHealth << "\n";
         if (enemyHealth == 0)
-        {
           exit(0);
-        }
       }
     }
     else
