@@ -79,6 +79,18 @@ void drawSpaceship()
   glPopMatrix();
 }
 
+void drawBullet()
+{
+  glPushMatrix();
+  glPointSize(10.0);
+  glBegin(GL_POINTS);
+  glColor3f(1, 0, 1);
+  glVertex2f(bulletX, bulletY);
+  glEnd();
+  glPopMatrix();
+  glutPostRedisplay();
+}
+
 void onKey(unsigned char key, int x, int y)
 {
   switch (key)
@@ -95,8 +107,9 @@ void onKey(unsigned char key, int x, int y)
   case '\e':
     exit(0);
     break;
-  default:
-    break;
+  default: // Any other button will fire a bullet.
+    bulletY = spaceshipY + 45;
+    bulletX = spaceshipX;
   }
   glutPostRedisplay();
 }
@@ -121,10 +134,13 @@ void displayCallback(void)
 {
   glClear(GL_COLOR_BUFFER_BIT);
   drawSpaceship();
+  drawBullet();
   glFlush();
 }
 
 void idleCallback()
 {
+  if (bulletY > 0 && bulletY < 600)
+    bulletY += 0.05;
   glutPostRedisplay();
 }
