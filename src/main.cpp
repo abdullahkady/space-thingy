@@ -260,6 +260,8 @@ void resetGame()
   enemyShotX = 0, enemyShotY = -100;
   enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
   enemyIsHit = false;
+  bg1Y = 0;
+  bg2Y = 0;
   gameOver = false;
 }
 
@@ -347,7 +349,14 @@ void displayCallback(void)
     drawHealthBar();
   }
   else
-    writeToScreen("Press R to restart", 200, 200);
+  {
+    if (enemyHealth <= 0)
+      writeToScreen("You WON !", 200, 170);
+    else
+      writeToScreen("You lost in a 2D game, misrable just like your life", 200, 170);
+
+    writeToScreen("Press R to restart, Q to quit", 200, 200);
+  }
 
   glFlush();
 }
@@ -377,7 +386,7 @@ void idleCallback()
         enemyIsHit = true;
         enemyHealth -= 10;
         if (enemyHealth == 0)
-          exit(0);
+          gameOver = true;
       }
     }
     else
