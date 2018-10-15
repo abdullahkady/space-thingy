@@ -12,7 +12,7 @@
 void displayCallback(void);
 void idleCallback(void);
 //-----------------
-
+bool gameOver = false;
 //	Global Variables
 double spaceshipX = 200, spaceshipY = 70;
 double missileX = 0, missileY = -100; // To be invisible by default
@@ -175,6 +175,16 @@ void drawMissile()
   glutPostRedisplay();
 }
 
+void resetGame()
+{
+  spaceshipX = 200, spaceshipY = 70;
+  missileX = 0, missileY = -100;
+  enemyShotX = 0, enemyShotY = -100;
+  enemyX = 0, enemyY = 450, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
+  enemyIsHit = false;
+  gameOver = false;
+}
+
 void onKey(unsigned char key, int x, int y)
 {
   switch (key)
@@ -186,6 +196,10 @@ void onKey(unsigned char key, int x, int y)
   case 'd':
     if (spaceshipX < 460)
       spaceshipX += 4;
+    break;
+  case 'r':
+    if (gameOver)
+      resetGame();
     break;
   case 'q':
   case '\e':
@@ -242,18 +256,34 @@ int main(int argc, char **argr)
   return 0;
 }
 
+void writeToScreen(std::string text)
+{
+  glColor3f(0.0, 0.0, 0.0);
+  glRasterPos3f(200, 200, 0);
+
+  for (int i = 0; i < text.length(); i++)
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
+}
+
 void displayCallback(void)
 {
   glClear(GL_COLOR_BUFFER_BIT);
-  drawSpaceship();
-  drawMissile();
-  drawEnemy();
-  drawEnemyShot();
+  if (!gameOver)
+  {
+    drawSpaceship();
+    drawMissile();
+    drawEnemy();
+    drawEnemyShot();
+  }
+  else
+    writeToScreen("Press R to restart");
+
   glFlush();
 }
 
 void idleCallback()
 {
+
   if (enemyX > 460 || enemyX < 20)
     enemyX = 20;
   if (enemySpeedCounter > 100)
@@ -288,7 +318,14 @@ void idleCallback()
   }
 
   if (enemyShotY > 0)
+  {
     enemyShotY -= 0.1;
+    if (abs(enemyShotY - spaceshipY) < 20)
+    {
+      if (abs(enemyShotX - spaceshipX) < 50)
+        gameOver = true;
+    }
+  }
   else // Clear the shot from the ground.
     enemyShotY = -100;
   glutPostRedisplay();
