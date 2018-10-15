@@ -16,7 +16,7 @@ void idleCallback(void);
 //	Global Variables
 double spaceshipX = 200, spaceshipY = 70;
 double missileX = 0, missileY = -100; // To be invisible by default
-double enemyX = 0, enemyY = 250, enemyHealth = 100, enemyWIDTH = 20, enemyHEIGHT = 20;
+double enemyX = 0, enemyY = 250, enemyHealth = 100, enemyWIDTH = 20, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
 bool enemyIsHit = false;
 //----------------
 
@@ -183,8 +183,13 @@ void idleCallback()
 {
   if (enemyX > 460 || enemyX < 20)
     enemyX = 20;
-  double val = (rand() % 1000) * 0.0001;
-  enemyX += val;
+  if (enemySpeedCounter > 100)
+  {
+    enemySpeedCounter = 0;
+    enemySpeed = (rand() % 100) * 0.0001;
+  }
+  enemySpeedCounter++;
+  enemyX += enemySpeed;
   if (missileY > 0 && missileY < 600)
   {
     missileY += 0.05;
