@@ -83,12 +83,20 @@ void onKey(unsigned char key, int x, int y)
 {
   switch (key)
   {
+  case 'a':
+    if (spaceshipX > 20)
+      spaceshipX -= 4;
+    break;
+  case 'd':
+    if (spaceshipX < 780)
+      spaceshipX += 4;
+    break;
   case 'q':
   case '\e':
     exit(0);
     break;
   default:
-    break; // Any other button will fire a bullet.
+    break;
   }
   glutPostRedisplay();
 }
