@@ -16,6 +16,8 @@ void idleCallback(void);
 //	Global Variables
 double spaceshipX = 200, spaceshipY = 70;
 double missileX = 0, missileY = -100; // To be invisible by default
+double enemyX = 0, enemyY = 250, enemyHealth = 100, enemyWIDTH = 20, enemyHEIGHT = 20;
+bool enemyIsHit = false;
 //----------------
 
 void drawSpaceship()
@@ -75,6 +77,19 @@ void drawSpaceship()
   glVertex2f(spaceshipX - 18, spaceshipY + 40);
   glVertex2f(spaceshipX + 18, spaceshipY + 40);
   glVertex2f(spaceshipX + 25, spaceshipY + 25);
+  glEnd();
+  glPopMatrix();
+}
+
+void drawEnemy()
+{
+  glPushMatrix();
+  glBegin(GL_QUADS);
+  glColor3f(1, 0, 0);
+  glVertex2f(enemyX - enemyWIDTH / 2, enemyY - enemyHEIGHT / 2);
+  glVertex2f(enemyX + enemyWIDTH / 2, enemyY - enemyHEIGHT / 2);
+  glVertex2f(enemyX + enemyWIDTH / 2, enemyY + enemyHEIGHT / 2);
+  glVertex2f(enemyX - enemyWIDTH / 2, enemyY + enemyHEIGHT / 2);
   glEnd();
   glPopMatrix();
 }
@@ -140,6 +155,7 @@ void onKey(unsigned char key, int x, int y)
 
 int main(int argc, char **argr)
 {
+  srand(time(NULL));
   glutInit(&argc, argr);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
   glutInitWindowPosition(100, 100);
@@ -159,12 +175,19 @@ void displayCallback(void)
   glClear(GL_COLOR_BUFFER_BIT);
   drawSpaceship();
   drawMissile();
+  drawEnemy();
   glFlush();
 }
 
 void idleCallback()
 {
+  if (enemyX > 460 || enemyX < 20)
+    enemyX = 20;
+  double val = (rand() % 1000) * 0.0001;
+  enemyX += val;
   if (missileY > 0 && missileY < 600)
+  {
     missileY += 0.05;
+  }
   glutPostRedisplay();
 }
