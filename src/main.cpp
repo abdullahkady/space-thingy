@@ -16,7 +16,7 @@ void idleCallback(void);
 //	Global Variables
 double spaceshipX = 200, spaceshipY = 70;
 double missileX = 0, missileY = -100; // To be invisible by default
-double enemyX = 0, enemyY = 250, enemyHealth = 100, enemyWIDTH = 20, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
+double enemyX = 0, enemyY = 450, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
 bool enemyIsHit = false;
 //----------------
 
@@ -83,13 +83,57 @@ void drawSpaceship()
 
 void drawEnemy()
 {
-  glPushMatrix();
-  glBegin(GL_QUADS);
   glColor3f(1, 0, 0);
-  glVertex2f(enemyX - enemyWIDTH / 2, enemyY - enemyHEIGHT / 2);
-  glVertex2f(enemyX + enemyWIDTH / 2, enemyY - enemyHEIGHT / 2);
-  glVertex2f(enemyX + enemyWIDTH / 2, enemyY + enemyHEIGHT / 2);
-  glVertex2f(enemyX - enemyWIDTH / 2, enemyY + enemyHEIGHT / 2);
+  // Body //
+  glPushMatrix();
+  glTranslated(enemyX, enemyY, 0);
+  glPushMatrix();
+  glScalef(35, 10, 1);
+  glutSolidSphere(1, 50, 50);
+  glPopMatrix();
+  // Body //
+
+  glPushMatrix(); // Lights / Windows / whatever they are \_0_/
+  glScalef(3, 3, 1);
+  glTranslated(-20, 0, 0); // Base translation
+  glColor3f(1, 1, 0);
+  glTranslated(5, 0, 0);
+  glColor3f(1, 1, 0);
+  glTranslated(5, 0, 0);
+  glColor3f(1, 0, 1);
+  glutSolidSphere(1, 10, 10);
+  glTranslated(5, 0, 0);
+  glColor3f(0, 1, 1);
+  glutSolidSphere(1, 10, 10);
+  glTranslated(5, 0, 0);
+  glColor3f(1, 1, 0);
+  glutSolidSphere(1, 10, 10);
+  glTranslated(5, 0, 0);
+  glColor3f(0, 1, 0);
+  glutSolidSphere(1, 10, 10);
+  glTranslated(5, 0, 0);
+  glColor3f(0, 1, 1);
+  glutSolidSphere(1, 10, 10);
+  glPopMatrix();
+  glPopMatrix();
+
+  glPushMatrix();
+  glLineWidth(3.0);
+  glColor3f(0, 0, 0);
+  glBegin(GL_QUADS);
+  glVertex2f(enemyX - 2, enemyY + 8);
+  glVertex2f(enemyX + 2, enemyY + 8);
+  glVertex2f(enemyX + 2, enemyY + 12);
+  glVertex2f(enemyX - 2, enemyY + 12);
+  glEnd();
+
+  glColor3f(0.5, 0.5, 1);
+  glBegin(GL_LINES);
+  glVertex2f(enemyX, enemyY + 10);
+  glVertex2f(enemyX - 25, enemyY + 25);
+
+  glVertex2f(enemyX, enemyY + 10);
+  glVertex2f(enemyX + 25, enemyY + 25);
   glEnd();
   glPopMatrix();
 }
@@ -211,7 +255,7 @@ void idleCallback()
     {
       enemyIsHit = false;
     }
-    missileY += 0.05;
+    missileY += 0.1;
   }
   glutPostRedisplay();
 }
