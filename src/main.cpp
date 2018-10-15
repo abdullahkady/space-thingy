@@ -14,12 +14,51 @@ void idleCallback(void);
 //-----------------
 bool gameOver = false;
 //	Global Variables
+double bg1Y = 0;
+double bg2Y = 0;
 double spaceshipX = 200, spaceshipY = 70;
 double missileX = 0, missileY = -100; // To be invisible by default
 double enemyShotX = 0, enemyShotY = -100;
 double enemyX = 0, enemyY = 450, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
 bool enemyIsHit = false;
 //----------------
+
+void drawBackground()
+{
+  glPushMatrix();
+
+  glPushMatrix();
+  glTranslated(0, bg1Y, 0);
+  glColor3f(0.24, 0, 0.54);
+  glBegin(GL_QUADS);
+  glVertex2f(0, 0);
+  glVertex2f(800, 0);
+  glVertex2f(800, 500);
+  glVertex2f(0, 500);
+  glEnd();
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslated(0, bg2Y, 0);
+  glColor3f(0.24, 0.24, 0.54);
+  glBegin(GL_QUADS);
+  glVertex2f(0, -500);
+  glVertex2f(800, -500);
+  glVertex2f(800, 0);
+  glVertex2f(0, 0);
+  glEnd();
+  glPopMatrix();
+
+  // for (int i = 0; i < rand() % 30; i++)
+  // {
+  //   glBegin(GL_POINTS);
+  //   glPointSize(rand() % 10);
+  //   glColor3f(rand(), rand(), rand());
+  //   glVertex2f(rand() % 800, rand() % 500);
+  //   glEnd();
+  // }
+  glPopMatrix();
+}
 
 void drawSpaceship()
 {
@@ -270,6 +309,7 @@ void displayCallback(void)
   glClear(GL_COLOR_BUFFER_BIT);
   if (!gameOver)
   {
+    drawBackground();
     drawSpaceship();
     drawMissile();
     drawEnemy();
@@ -283,6 +323,9 @@ void displayCallback(void)
 
 void idleCallback()
 {
+
+  bg1Y = (bg1Y >= 500) ? 0 : bg1Y + 0.1;
+  bg2Y = (bg2Y >= 500) ? 0 : bg2Y + 0.1;
 
   if (enemyX > 460 || enemyX < 20)
     enemyX = 20;
