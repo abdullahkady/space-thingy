@@ -192,6 +192,25 @@ void idleCallback()
   enemyX += enemySpeed;
   if (missileY > 0 && missileY < 600)
   {
+    if (abs(missileY - enemyY) < enemyHEIGHT && abs(missileX - enemyX) < enemyWIDTH)
+    {
+      if (!enemyIsHit)
+      {
+        missileY = -100;
+        enemyIsHit = true;
+        enemyHealth -= 10;
+        std::cout << "ENEMY HIT!"
+                  << "CURRENT HEALTH: " << enemyHealth << "\n";
+        if (enemyHealth == 0)
+        {
+          exit(0);
+        }
+      }
+    }
+    else
+    {
+      enemyIsHit = false;
+    }
     missileY += 0.05;
   }
   glutPostRedisplay();
