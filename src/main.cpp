@@ -15,7 +15,7 @@ void idleCallback(void);
 
 //	Global Variables
 double spaceshipX = 200, spaceshipY = 70;
-double bulletX = 0, bulletY = -100; // To be invisible by default
+double missileX = 0, missileY = -100; // To be invisible by default
 //----------------
 
 void drawSpaceship()
@@ -79,14 +79,38 @@ void drawSpaceship()
   glPopMatrix();
 }
 
-void drawBullet()
+void drawMissile()
 {
   glPushMatrix();
   glPointSize(10.0);
-  glBegin(GL_POINTS);
-  glColor3f(1, 0, 1);
-  glVertex2f(bulletX, bulletY);
+  glBegin(GL_QUADS);
+  glColor3f(0.8, 0.8, 0.8);
+  glVertex2f(missileX - 3, missileY - 10);
+  glVertex2f(missileX + 5, missileY - 10);
+  glVertex2f(missileX + 5, missileY + 10);
+  glVertex2f(missileX - 3, missileY + 10);
   glEnd();
+  glBegin(GL_TRIANGLES);
+  glColor3f(1, 0, 0);
+  glVertex2f(missileX - 3, missileY + 10);
+  glVertex2f(missileX + 5, missileY + 10);
+  glVertex2f(missileX + 1, missileY + 18);
+  glEnd();
+
+  glBegin(GL_TRIANGLES);
+  glColor3f(0, 0, 1);
+  glVertex2f(missileX - 2, missileY - 8);
+  glVertex2f(missileX - 2, missileY - 15);
+  glVertex2f(missileX - 10, missileY - 20);
+  glEnd();
+
+  glBegin(GL_TRIANGLES);
+  glColor3f(0, 0, 1);
+  glVertex2f(missileX + 4, missileY - 8);
+  glVertex2f(missileX + 4, missileY - 15);
+  glVertex2f(missileX + 12, missileY - 20);
+  glEnd();
+
   glPopMatrix();
   glutPostRedisplay();
 }
@@ -108,8 +132,8 @@ void onKey(unsigned char key, int x, int y)
     exit(0);
     break;
   default: // Any other button will fire a bullet.
-    bulletY = spaceshipY + 45;
-    bulletX = spaceshipX;
+    missileY = spaceshipY + 55;
+    missileX = spaceshipX;
   }
   glutPostRedisplay();
 }
@@ -134,13 +158,13 @@ void displayCallback(void)
 {
   glClear(GL_COLOR_BUFFER_BIT);
   drawSpaceship();
-  drawBullet();
+  drawMissile();
   glFlush();
 }
 
 void idleCallback()
 {
-  if (bulletY > 0 && bulletY < 600)
-    bulletY += 0.05;
+  if (missileY > 0 && missileY < 600)
+    missileY += 0.05;
   glutPostRedisplay();
 }
