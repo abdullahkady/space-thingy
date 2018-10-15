@@ -16,6 +16,7 @@ void idleCallback(void);
 //	Global Variables
 double spaceshipX = 200, spaceshipY = 70;
 double missileX = 0, missileY = -100; // To be invisible by default
+double enemyShotX = 0, enemyShotY = -100;
 double enemyX = 0, enemyY = 450, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
 bool enemyIsHit = false;
 //----------------
@@ -197,6 +198,32 @@ void onKey(unsigned char key, int x, int y)
   glutPostRedisplay();
 }
 
+void drawEnemyShot()
+{
+  glPushMatrix();
+  glPointSize(8.0);
+  glBegin(GL_POINTS);
+  glColor3f(1, 0, 0);
+  glVertex2f(enemyShotX, enemyShotY);
+  glColor3f(0, 0, 1);
+  glVertex2f(enemyShotX, enemyShotY + 10);
+  glEnd();
+  glPopMatrix();
+}
+
+void dropTheBall() // Classic .. ¯\_(ツ)_/¯
+{
+  enemyShotX = enemyX;
+  enemyShotY = enemyY;
+}
+
+void startInterval(int val)
+{
+  if (enemyShotY == -100) // Don't draw the shot if it's already being shot.
+    dropTheBall();
+  glutTimerFunc((rand() % 2) * 1000, startInterval, 0);
+}
+
 int main(int argc, char **argr)
 {
   srand(time(NULL));
@@ -208,6 +235,7 @@ int main(int argc, char **argr)
   glutDisplayFunc(displayCallback);
   glutKeyboardFunc(onKey);
   glutIdleFunc(idleCallback);
+  glutTimerFunc(2000, startInterval, 0);
   glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
   gluOrtho2D(0.0, 500.0, 0.0, 500.0);
   glutMainLoop();
@@ -220,6 +248,7 @@ void displayCallback(void)
   drawSpaceship();
   drawMissile();
   drawEnemy();
+  drawEnemyShot();
   glFlush();
 }
 
@@ -257,5 +286,10 @@ void idleCallback()
     }
     missileY += 0.1;
   }
+
+  if (enemyShotY > 0)
+    enemyShotY -= 0.1;
+  else // Clear the shot from the ground.
+    enemyShotY = -100;
   glutPostRedisplay();
 }
