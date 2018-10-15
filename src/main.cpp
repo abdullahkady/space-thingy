@@ -322,7 +322,7 @@ void idleCallback()
     enemyShotY -= 0.1;
     if (abs(enemyShotY - spaceshipY) < 20)
     {
-      if (abs(enemyShotX - spaceshipX) < 50)
+      if (abs(enemyShotX - spaceshipX) < 40)
         gameOver = true;
     }
   }
