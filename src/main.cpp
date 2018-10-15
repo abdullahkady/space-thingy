@@ -96,11 +96,11 @@ void onKey(unsigned char key, int x, int y)
   switch (key)
   {
   case 'a':
-    if (spaceshipX > 20)
+    if (spaceshipX > 40)
       spaceshipX -= 4;
     break;
   case 'd':
-    if (spaceshipX < 780)
+    if (spaceshipX < 460)
       spaceshipX += 4;
     break;
   case 'q':
