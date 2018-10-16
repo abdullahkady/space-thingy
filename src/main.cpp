@@ -304,8 +304,12 @@ void onKey(unsigned char key, int x, int y)
     exit(0);
     break;
   default: // Any other button will fire a bullet.
-    missileY = spaceshipY + 55;
-    missileX = spaceshipX;
+    if (missileY < 0)
+    {
+
+      missileY = spaceshipY + 55;
+      missileX = spaceshipX;
+    }
   }
   glutPostRedisplay();
 }
