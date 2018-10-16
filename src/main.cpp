@@ -17,7 +17,7 @@ bool gameOver = false;
 //	Global Variables
 double bg1Y = 0;
 double bg2Y = 0;
-double spaceshipX = 200, spaceshipY = 70;
+double spaceshipX = 200, spaceshipY = 70, spaceshipRotation = 0;
 double missileX = 0, missileY = -100; // To be invisible by default
 double enemyShotX = 0, enemyShotY = -100;
 double enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
@@ -117,6 +117,10 @@ void drawHealthBar()
 void drawSpaceship()
 {
   glPushMatrix();
+  glTranslatef(spaceshipX, spaceshipY, 0);
+  glRotatef(spaceshipRotation, 0, 0, 1);
+  glTranslatef(-spaceshipX, -spaceshipY, 0);
+
   glPointSize(10.0);
   glLineWidth(8.0);
 
@@ -289,11 +293,17 @@ void onKey(unsigned char key, int x, int y)
   {
   case 'a':
     if (spaceshipX > 40)
+    {
+      spaceshipRotation = 15;
       spaceshipX -= playerSpeed;
+    }
     break;
   case 'd':
     if (spaceshipX < 460)
+    {
+      spaceshipRotation = -15;
       spaceshipX += playerSpeed;
+    }
     break;
   case 'r':
     if (gameOver)
