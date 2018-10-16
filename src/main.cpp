@@ -306,7 +306,6 @@ void onKey(unsigned char key, int x, int y)
   default: // Any other button will fire a bullet.
     if (missileY < 0)
     {
-
       missileY = spaceshipY + 55;
       missileX = spaceshipX;
     }
@@ -429,7 +428,9 @@ void idleCallback()
   }
   enemySpeedCounter++;
   enemyX += enemySpeed;
-  if (missileY > 0 && missileY < 600)
+  if (missileY > 520)
+    missileY = -100;
+  if (missileY > 0)
   {
     if (abs(missileY - enemyY) < enemyHEIGHT && abs(missileX - enemyX) < enemyWIDTH)
     {
