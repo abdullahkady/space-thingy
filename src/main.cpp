@@ -101,7 +101,12 @@ void drawPowerUpStatus()
   }
 
   glColor3f(0, 1, 1);
-  actualKindOfCircle(345, 445, 5);
+  actualKindOfCircle(345, 445, 7);
+  glPointSize(7);
+  glBegin(GL_POINTS);
+  glColor3f(1, 0, 0);
+  glVertex2f(345, 445);
+  glEnd();
   writeToScreen("Missile Speed Boost:", 355, 440, 1, 1, 1);
   if (missileSpeed == 4)
   {
@@ -128,7 +133,12 @@ void drawPowerUps()
   // Missile tip turns green while being boosted.
   glPushMatrix();
   glColor3f(0, 1, 1);
-  actualKindOfCircle(missileSpeedPowerUpX, missileSpeedPowerUpY, 5);
+  actualKindOfCircle(missileSpeedPowerUpX, missileSpeedPowerUpY, 7);
+  glPointSize(7);
+  glBegin(GL_POINTS);
+  glColor3f(1, 0, 0);
+  glVertex2f(missileSpeedPowerUpX, missileSpeedPowerUpY);
+  glEnd();
   glPopMatrix();
 
   drawPowerUpStatus();
@@ -339,7 +349,7 @@ void drawEnemyDefender()
 void drawEnemy()
 {
   if (enemyY < -50) // Enemy is currently respawning.
-    writeToScreen("Nice job, wait for it ...", 250, 250, 1, 1, 1);
+    writeToScreen("Nice job, wait for it ...", 170, 250, 1, 1, 1);
 
   glColor3f(1, 0, 0);
   // Body //
