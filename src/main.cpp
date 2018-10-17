@@ -379,7 +379,7 @@ void drawMissile()
   glVertex2f(missileX - 3, missileY + 10);
   glEnd();
   glBegin(GL_TRIANGLES);
-  glColor3f(1, 0, 0);
+  glColor3f((missileSpeed == 3) ? 1 : 0, (missileSpeed == 3) ? 0 : 1, 0);
   glVertex2f(missileX - 3, missileY + 10);
   glVertex2f(missileX + 5, missileY + 10);
   glVertex2f(missileX + 1, missileY + 18);
