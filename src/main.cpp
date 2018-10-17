@@ -20,11 +20,28 @@ double bg2Y = 0;
 double spaceshipX = 200, spaceshipY = 70, spaceshipRotation = 0;
 double missileX = 0, missileY = -100; // To be invisible by default
 double enemyShotX = 0, enemyShotY = -100;
-double enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
+double enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20;
 double speedPowerUpX = 0, speedPowerUpY = -100, speedPowerUpTimer = 0;
 double playerSpeed = 4;
 bool enemyIsHit = false;
 //----------------
+
+// BEZIER //
+int p0[2] = {30, 450};
+int p1[2];
+int p2[2];
+int p3[2] = {600, 450};
+float t = 0;
+// BEZIER //
+
+int *bezier(float t, int *p0, int *p1, int *p2, int *p3)
+{
+  int *res = (int *)(malloc(sizeof(int) * 2));
+  res[0] = pow((1 - t), 3) * p0[0] + 3 * t * pow((1 - t), 2) * p1[0] + 3 * pow(t, 2) * (1 - t) * p2[0] + pow(t, 3) * p3[0];
+  res[1] = pow((1 - t), 3) * p0[1] + 3 * t * pow((1 - t), 2) * p1[1] + 3 * pow(t, 2) * (1 - t) * p2[1] + pow(t, 3) * p3[1];
+  return res;
+}
+
 void writeToScreen(std::string text, float x, float y, float r, float g, float b)
 {
   glColor3f(r, g, b);
@@ -292,7 +309,7 @@ void resetGame()
   spaceshipX = 200, spaceshipY = 70;
   missileX = 0, missileY = -100;
   enemyShotX = 0, enemyShotY = -100;
-  enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20, enemySpeed = 1, enemySpeedCounter = 0;
+  enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20;
   enemyIsHit = false;
   bg1Y = 0;
   bg2Y = 0;
@@ -436,6 +453,49 @@ void handlePowerUpsCollision()
   }
 }
 
+void handleEnemyMovement()
+{
+
+  int *point = bezier(t, p0, p1, p2, p3);
+  t += 0.0002;
+
+  if (t >= 1)
+  {
+    t = 0;
+    p0[0] = p3[0];
+    p0[1] = p3[1];
+
+    p3[0] = rand() % 500;
+    p3[1] = rand() % 400;
+    p1[0] = rand() % 500;
+    p1[1] = rand() % 400;
+    p2[0] = rand() % 500;
+    p2[1] = rand() % 400;
+  }
+
+  if (p3[1] < 250)
+  {
+    p3[1] += 220;
+  }
+  if (p1[1] < 250)
+  {
+    p1[1] += 220;
+  }
+  if (p2[1] < 250)
+  {
+    p2[1] += 220;
+  }
+
+  enemyX = point[0];
+  enemyY = point[1];
+
+  // Lock him to the borders.
+  if (enemyX > 460)
+    enemyX = 460;
+  else if (enemyX < 20)
+    enemyX = 20;
+}
+
 void idleCallback()
 {
   handlePowerUpsCollision();
@@ -443,15 +503,8 @@ void idleCallback()
   bg1Y = (bg1Y >= 500) ? 0 : bg1Y + 0.1;
   bg2Y = (bg2Y >= 500) ? 0 : bg2Y + 0.1;
 
-  if (enemyX > 460 || enemyX < 20)
-    enemyX = 20;
-  if (enemySpeedCounter > 100)
-  {
-    enemySpeedCounter = 0;
-    enemySpeed = (rand() % 100) * 0.0001;
-  }
-  enemySpeedCounter++;
-  enemyX += enemySpeed;
+  handleEnemyMovement();
+
   if (missileY > 520)
     missileY = -100;
   if (missileY > 0)
