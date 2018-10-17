@@ -119,6 +119,7 @@ void drawSpaceship()
   glPushMatrix();
   glTranslatef(spaceshipX, spaceshipY, 0);
   glRotatef(spaceshipRotation, 0, 0, 1);
+  glScaled(0.5, 0.5, 1);
   glTranslatef(-spaceshipX, -spaceshipY, 0);
 
   glPointSize(10.0);
@@ -457,15 +458,15 @@ void idleCallback()
     {
       enemyIsHit = false;
     }
-    missileY += 0.1;
+    missileY += 0.3;
   }
 
   if (enemyShotY > 0)
   {
     enemyShotY -= 0.1;
-    if (abs(enemyShotY - spaceshipY) < 20)
+    if (abs(enemyShotY - spaceshipY) < 10)
     {
-      if (abs(enemyShotX - spaceshipX) < 40)
+      if (abs(enemyShotX - spaceshipX) < 20)
         gameOver = true;
     }
   }
