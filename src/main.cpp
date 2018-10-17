@@ -373,16 +373,23 @@ void dropTheBall() // Classic .. ¯\_(ツ)_/¯
   enemyShotY = enemyY;
 }
 
-void startInterval(int val)
+void powerUpInterval(int val)
 {
-  if (rand() % 50 < 5 && speedPowerUpY == -100 && speedPowerUpTimer <= 0)
+  if (speedPowerUpY == -100 && speedPowerUpTimer <= 0)
   {
     speedPowerUpX = 150 + rand() % 300;
     speedPowerUpY = 300 + rand() % 150;
   }
+  glutTimerFunc((rand() % 10) * 1000, powerUpInterval, 0);
+}
+
+void enemyShotInterval(int val)
+{
+
   if (enemyShotY == -100) // Don't draw the shot if it's already being shot.
     dropTheBall();
-  glutTimerFunc((rand() % 2) * 1000, startInterval, 0);
+  glutTimerFunc(500, enemyShotInterval, 0);
+  // Will drop a new shot whenever the first one hits the bottom
 }
 
 int main(int argc, char **argr)
@@ -396,7 +403,8 @@ int main(int argc, char **argr)
   glutDisplayFunc(displayCallback);
   glutKeyboardFunc(onKey);
   glutIdleFunc(idleCallback);
-  glutTimerFunc(2000, startInterval, 0);
+  glutTimerFunc(2000, enemyShotInterval, 0);
+  glutTimerFunc(2000, powerUpInterval, 0);
   glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
   gluOrtho2D(0.0, 500.0, 0.0, 500.0);
   glutMainLoop();
