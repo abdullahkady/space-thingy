@@ -310,6 +310,19 @@ void drawSpaceship()
 
 void drawEnemyDefender()
 {
+  // DEFENDER SHOT //
+  glPushMatrix();
+  glPointSize(7.0);
+  glBegin(GL_POINTS);
+  glColor3f(0, 0, 0);
+  glVertex2f(enemyDefenderShotX, enemyDefenderShotY);
+  glColor3f(1, 1, 1);
+  glVertex2f(enemyDefenderShotX, enemyDefenderShotY - 10);
+  glEnd();
+  glPopMatrix();
+  // DEFENDER SHOT //
+
+  // THE DEFENDER //
   glPushMatrix();
   glColor3f(0, 0, 0);
   glBegin(GL_TRIANGLE_FAN);
@@ -320,6 +333,7 @@ void drawEnemyDefender()
   glVertex2f(enemyDefenderX - 10, enemyDefenderY + 25);
   glEnd();
   glPopMatrix();
+  // THE DEFENDER //
 }
 
 void drawEnemy()
@@ -517,9 +531,19 @@ void enemyDefenderInterval(int val)
   glutTimerFunc((rand() % 5) * 1000, enemyDefenderInterval, 0);
 }
 
+void enemyDefenderShotInterval(int val)
+{
+  if (enemyDefenderY > 0 && enemyDefenderShotY < 0)
+  {
+    enemyDefenderShotX = enemyDefenderX;
+    enemyDefenderShotY = enemyDefenderY;
+  }
+  glutTimerFunc(500, enemyDefenderShotInterval, 0);
+  // Will drop a new shot whenever the first one hits the bottom
+}
+
 void enemyShotInterval(int val)
 {
-
   if (enemyShotY == -100) // Don't draw the shot if it's already being shot.
     dropTheBall();
   glutTimerFunc(500, enemyShotInterval, 0);
@@ -542,6 +566,7 @@ int main(int argc, char **argr)
   glutTimerFunc(1000, enemyShotInterval, 0);
   glutTimerFunc(2000, powerUpInterval, 0);
   glutTimerFunc(2000, enemyDefenderInterval, 0);
+  glutTimerFunc(2000, enemyDefenderShotInterval, 0);
   glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
   gluOrtho2D(0.0, 500.0, 0.0, 500.0);
   glutMainLoop();
@@ -732,6 +757,18 @@ void idleCallback()
     }
     missileY += (missileSpeed / 10);
   }
+
+  if (enemyDefenderY > 0)
+  {
+    enemyDefenderShotY -= 0.15;
+    if (abs(enemyDefenderShotY - spaceshipY) < 10)
+    {
+      if (abs(enemyDefenderShotX - spaceshipX) < 20)
+        gameOver = true;
+    }
+  }
+  else // Clear the shot from the ground.
+    enemyDefenderShotY = -100;
 
   if (enemyShotY > 0)
   {
