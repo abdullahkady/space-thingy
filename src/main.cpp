@@ -21,11 +21,12 @@ double bg1Points[30][2];
 double bg2Points[30][2];
 
 double spaceshipX = 200, spaceshipY = 70, spaceshipRotation = 0;
-double missileX = 0, missileY = -100; // To be invisible by default
+double missileX = 0, missileY = -100, missileSpeed = 3; // To be invisible by default
 double enemyShotX = 0, enemyShotY = -100;
 double enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20;
 double enemyDefenderX = -100, enemyDefenderY = 300, enemyDefenderShotX = 0, enemyDefenderShotY = -100;
 double speedPowerUpX = 0, speedPowerUpY = -100, speedPowerUpTimer = 0;
+double missileSpeedPowerUpX = 0, missileSpeedPowerUpY = -100, missileSpeedPowerUpTimer = 0;
 double playerSpeed = 4;
 //----------------
 
@@ -82,23 +83,49 @@ void actualKindOfCircle(float cx, float cy, float r)
 
 void drawPowerUpStatus()
 {
+  glColor3f(0, 1, 0);
+  weirdCircleFailureShape(345, 475, 5);
+  writeToScreen("Player Speed Boost:", 355, 470, 1, 1, 1);
   if (playerSpeed == 4)
   {
-    writeToScreen("Player Speed Boost: OFF", 355, 450, 0, 0, 0);
+    writeToScreen("OFF", 465, 470, 1, 0, 0);
   }
   else
   {
-    writeToScreen("Player Speed Boost: ON", 355, 450, 0, 1, 0);
+    std::ostringstream tmp;
+    tmp << speedPowerUpTimer;
+    writeToScreen(tmp.str(), 465, 470, 0, 1, 0);
+  }
+
+  glColor3f(0, 1, 1);
+  actualKindOfCircle(345, 445, 5);
+  writeToScreen("Missile Speed Boost:", 355, 440, 1, 1, 1);
+  if (missileSpeed == 3)
+  {
+    writeToScreen("OFF", 465, 440, 1, 0, 0);
+  }
+  else
+  {
+    std::ostringstream tmp;
+    tmp << missileSpeedPowerUpTimer;
+    writeToScreen(tmp.str(), 465, 440, 0, 1, 0);
   }
 }
 
 void drawPowerUps()
 {
-  // Speeds the player movement with a random factor, for a random period.
+  // Speeds the player movement, for a random period.
   // Thrusts turn green during boost time
   glPushMatrix();
   glColor3f(0, 1, 0);
   weirdCircleFailureShape(speedPowerUpX, speedPowerUpY, 5);
+  glPopMatrix();
+
+  // Speeds the player missile shooting.
+  // Missile tip turns green while being boosted.
+  glPushMatrix();
+  glColor3f(0, 1, 1);
+  actualKindOfCircle(missileSpeedPowerUpX, missileSpeedPowerUpY, 5);
   glPopMatrix();
 
   drawPowerUpStatus();
@@ -181,7 +208,7 @@ void drawHealthBar()
   std::ostringstream tmp;
   tmp << enemyHealth;
 
-  writeToScreen("Enemy health: " + tmp.str() + "\%", 10, 450, 0, 0, 0);
+  writeToScreen("Enemy health: " + tmp.str() + "\%", 10, 450, 1, 1, 1);
   // The damage dealt (red base bar)
   glBegin(GL_QUADS);
   glColor3f(1, 0, 0);
@@ -451,12 +478,17 @@ void dropTheBall() // Classic .. ¯\_(ツ)_/¯
 
 void powerUpInterval(int val)
 {
-  if (speedPowerUpY == -100 && speedPowerUpTimer <= 0)
+  if ((rand() % 30) > 15 && speedPowerUpY == -100 && speedPowerUpTimer <= 0)
   {
     speedPowerUpX = 150 + rand() % 300;
-    speedPowerUpY = 300 + rand() % 150;
+    speedPowerUpY = 450;
   }
-  glutTimerFunc((rand() % 10) * 1000, powerUpInterval, 0);
+  if ((rand() % 35) < 15 && missileSpeedPowerUpY == -100 && missileSpeedPowerUpTimer <= 0)
+  {
+    missileSpeedPowerUpX = 150 + rand() % 300;
+    missileSpeedPowerUpY = 450;
+  }
+  glutTimerFunc(1000, powerUpInterval, 0);
 }
 
 void enemyDefenderInterval(int val)
@@ -527,6 +559,28 @@ void displayCallback(void)
 void handlePowerUpsCollision()
 {
   speedPowerUpY = (speedPowerUpY <= 0) ? -100 : speedPowerUpY - 0.1;
+  missileSpeedPowerUpY = (missileSpeedPowerUpY <= 0) ? -100 : missileSpeedPowerUpY - 0.1;
+
+  if (missileSpeedPowerUpY != -100)
+  {
+    if (abs(missileSpeedPowerUpY - spaceshipY) < 20 && abs(missileSpeedPowerUpX - spaceshipX) < 40)
+    {
+      missileSpeed = 6;
+      missileSpeedPowerUpTimer = 3 + rand() % 5;
+      missileSpeedPowerUpY = -100;
+    }
+  }
+
+  if (missileSpeed != 3)
+  {
+    missileSpeedPowerUpTimer -= 0.001;
+    if (missileSpeedPowerUpTimer <= 0)
+    {
+      missileSpeedPowerUpTimer = 0;
+      missileSpeed = 3;
+    }
+  }
+
   if (speedPowerUpY != -100)
   {
     if (abs(speedPowerUpY - spaceshipY) < 20 && abs(speedPowerUpX - spaceshipX) < 40)
@@ -645,7 +699,7 @@ void idleCallback()
       if (enemyHealth == 0)
         gameOver = true;
     }
-    missileY += 0.3;
+    missileY += (missileSpeed / 10);
   }
 
   if (enemyShotY > 0)
