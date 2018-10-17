@@ -697,7 +697,7 @@ void handleEnemyMovement()
 void handleEnemyDefender()
 {
   // MOVEMENT //
-  if (enemyDefenderX > 450)
+  if (enemyDefenderX > 480)
     enemyDefenderX = -100;
   if (enemyDefenderX != -100)
     enemyDefenderX += 0.15;
@@ -712,6 +712,20 @@ void handleEnemyDefender()
     }
   }
   // SHOTS BLOCKING //
+
+  // SHOTS COLLISON //
+  if (enemyDefenderY > 0)
+  {
+    enemyDefenderShotY -= 0.15;
+    if (abs(enemyDefenderShotY - spaceshipY) < 10)
+    {
+      if (abs(enemyDefenderShotX - spaceshipX) < 20)
+        gameOver = true;
+    }
+  }
+  else // Clear the shot from the ground.
+    enemyDefenderShotY = -100;
+  // SHOTS COLLISON //
 }
 
 void idleCallback()
@@ -757,18 +771,6 @@ void idleCallback()
     }
     missileY += (missileSpeed / 10);
   }
-
-  if (enemyDefenderY > 0)
-  {
-    enemyDefenderShotY -= 0.15;
-    if (abs(enemyDefenderShotY - spaceshipY) < 10)
-    {
-      if (abs(enemyDefenderShotX - spaceshipX) < 20)
-        gameOver = true;
-    }
-  }
-  else // Clear the shot from the ground.
-    enemyDefenderShotY = -100;
 
   if (enemyShotY > 0)
   {
