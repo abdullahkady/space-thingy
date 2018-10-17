@@ -28,11 +28,25 @@ bool enemyIsHit = false;
 
 void writeToScreen(std::string text, float x, float y)
 {
-  glColor3f(0.0, 0.0, 0.0);
+void writeToScreen(std::string text, float x, float y, float r, float g, float b)
+{
+  glColor3f(r, g, b);
   glRasterPos3f(x, y, 0);
 
   for (int i = 0; i < text.length(); i++)
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
+}
+
+void drawPowerUpStatus()
+{
+  if (playerSpeed == 4)
+  {
+    writeToScreen("Player Speed Boost: OFF", 355, 450, 0, 0, 0);
+  }
+  else
+  {
+    writeToScreen("Player Speed Boost: ON", 355, 450, 0, 1, 0);
+  }
 }
 
 void drawPowerUps()
@@ -46,6 +60,8 @@ void drawPowerUps()
   glVertex2f(speedPowerUpX, speedPowerUpY);
   glEnd();
   glPopMatrix();
+
+  drawPowerUpStatus();
 }
 
 void drawBackground()
@@ -93,7 +109,7 @@ void drawHealthBar()
   std::ostringstream tmp;
   tmp << enemyHealth;
 
-  writeToScreen("Enemy health: " + tmp.str() + "\%", 10, 450);
+  writeToScreen("Enemy health: " + tmp.str() + "\%", 10, 450, 0, 0, 0);
   // The damage dealt (red base bar)
   glBegin(GL_QUADS);
   glColor3f(1, 0, 0);
@@ -389,11 +405,11 @@ void displayCallback(void)
   else
   {
     if (enemyHealth <= 0)
-      writeToScreen("You WON !", 200, 170);
+      writeToScreen("You WON !", 200, 170, 0, 0, 0);
     else
-      writeToScreen("You lost in a 2D game, misrable just like your life", 200, 170);
+      writeToScreen("You lost in a 2D game, misrable just like your life", 200, 170, 0, 0, 0);
 
-    writeToScreen("Press R to restart, Q to quit", 200, 200);
+    writeToScreen("Press R to restart, Q to quit", 200, 200, 0, 0, 0);
   }
 
   glFlush();
