@@ -25,9 +25,6 @@ double speedPowerUpX = 0, speedPowerUpY = -100, speedPowerUpTimer = 0;
 double playerSpeed = 4;
 bool enemyIsHit = false;
 //----------------
-
-void writeToScreen(std::string text, float x, float y)
-{
 void writeToScreen(std::string text, float x, float y, float r, float g, float b)
 {
   glColor3f(r, g, b);
