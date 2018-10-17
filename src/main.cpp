@@ -17,6 +17,9 @@ bool gameOver = false;
 //	Global Variables
 double bg1Y = 0;
 double bg2Y = 0;
+double bg1Points[30][2];
+double bg2Points[30][2];
+
 double spaceshipX = 200, spaceshipY = 70, spaceshipRotation = 0;
 double missileX = 0, missileY = -100; // To be invisible by default
 double enemyShotX = 0, enemyShotY = -100;
@@ -78,6 +81,23 @@ void drawPowerUps()
   drawPowerUpStatus();
 }
 
+void generateBG1Points()
+{
+  for (int i = 0; i < 30; i++)
+  {
+    bg1Points[i][0] = rand() % 500;
+    bg1Points[i][1] = rand() % 500;
+  }
+}
+void generateBG2Points()
+{
+  for (int i = 0; i < 30; i++)
+  {
+    bg2Points[i][0] = rand() % 500;
+    bg2Points[i][1] = -500 + rand() % 500;
+  }
+}
+
 void drawBackground()
 {
   glPushMatrix();
@@ -88,8 +108,8 @@ void drawBackground()
   glBegin(GL_QUADS);
   glVertex2f(0, 0);
   glVertex2f(800, 0);
-  glVertex2f(800, 500);
-  glVertex2f(0, 500);
+  glVertex2f(800, 501);
+  glVertex2f(0, 501);
   glEnd();
   glPopMatrix();
 
@@ -104,14 +124,29 @@ void drawBackground()
   glEnd();
   glPopMatrix();
 
-  // for (int i = 0; i < rand() % 30; i++)
-  // {
-  //   glBegin(GL_POINTS);
-  //   glPointSize(rand() % 10);
-  //   glColor3f(rand(), rand(), rand());
-  //   glVertex2f(rand() % 800, rand() % 500);
-  //   glEnd();
-  // }
+  glPushMatrix();
+  glPointSize(3);
+  glTranslated(0, bg1Y, 0);
+  glBegin(GL_POINTS);
+  glColor3f(0.65, 0.65, 0.65);
+  for (int i = 0; i < 30; i++)
+  {
+    glVertex2f(bg1Points[i][0], bg1Points[i][1]);
+  }
+  glEnd();
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslated(0, bg2Y, 0);
+  glBegin(GL_POINTS);
+  glColor3f(0.65, 0.65, 0.65);
+  for (int i = 0; i < 30; i++)
+  {
+    glVertex2f(bg2Points[i][0], bg2Points[i][1]);
+  }
+  glEnd();
+  glPopMatrix();
+
   glPopMatrix();
 }
 
@@ -415,6 +450,8 @@ void enemyShotInterval(int val)
 int main(int argc, char **argr)
 {
   srand(time(NULL));
+  generateBG1Points();
+  generateBG2Points();
   glutInit(&argc, argr);
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
   glutInitWindowPosition(100, 100);
@@ -551,8 +588,21 @@ void idleCallback()
   handlePowerUpsCollision();
   handleEnemyDefender();
 
-  bg1Y = (bg1Y >= 500) ? 0 : bg1Y + 0.1;
-  bg2Y = (bg2Y >= 500) ? 0 : bg2Y + 0.1;
+  if (bg1Y >= 500)
+  {
+    bg1Y = -500;
+    generateBG1Points();
+  }
+  else
+    bg1Y += 0.1;
+
+  if (bg2Y >= 1000)
+  {
+    bg2Y = 0;
+    generateBG2Points();
+  }
+  else
+    bg2Y += 0.1;
 
   handleEnemyMovement();
 
