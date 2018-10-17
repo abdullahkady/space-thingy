@@ -27,10 +27,10 @@ bool enemyIsHit = false;
 //----------------
 
 // BEZIER //
-int p0[2] = {30, 450};
+int p0[2] = {30, 380};
 int p1[2];
 int p2[2];
-int p3[2] = {600, 450};
+int p3[2] = {550, 380};
 float t = 0;
 // BEZIER //
 
