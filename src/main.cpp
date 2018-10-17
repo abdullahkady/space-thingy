@@ -8,12 +8,15 @@
 #include <math.h>
 #include <sstream>
 //-----------------
+// Quick macro for rounding decimals
+#define ROUNDF(f, c) (((float)((int)((f) * (c))) / (c)))
 
 //	Methods Signatures
 void displayCallback(void);
 void idleCallback(void);
 //-----------------
 bool gameOver = false;
+int gameScore = 0;
 //	Global Variables
 double bg1Y = 0;
 double bg2Y = 0;
@@ -21,13 +24,13 @@ double bg1Points[30][2];
 double bg2Points[30][2];
 
 double spaceshipX = 200, spaceshipY = 70, spaceshipRotation = 0;
-double missileX = 0, missileY = -100, missileSpeed = 3; // To be invisible by default
+double missileX = 0, missileY = -100, missileSpeed = 4; // To be invisible by default
 double enemyShotX = 0, enemyShotY = -100;
 double enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20;
 double enemyDefenderX = -100, enemyDefenderY = 300, enemyDefenderShotX = 0, enemyDefenderShotY = -100;
 double speedPowerUpX = 0, speedPowerUpY = -100, speedPowerUpTimer = 0;
 double missileSpeedPowerUpX = 0, missileSpeedPowerUpY = -100, missileSpeedPowerUpTimer = 0;
-double playerSpeed = 4;
+double playerSpeed = 5;
 //----------------
 
 // BEZIER //
@@ -86,7 +89,7 @@ void drawPowerUpStatus()
   glColor3f(0, 1, 0);
   weirdCircleFailureShape(345, 475, 5);
   writeToScreen("Player Speed Boost:", 355, 470, 1, 1, 1);
-  if (playerSpeed == 4)
+  if (playerSpeed == 5)
   {
     writeToScreen("OFF", 465, 470, 1, 0, 0);
   }
@@ -100,7 +103,7 @@ void drawPowerUpStatus()
   glColor3f(0, 1, 1);
   actualKindOfCircle(345, 445, 5);
   writeToScreen("Missile Speed Boost:", 355, 440, 1, 1, 1);
-  if (missileSpeed == 3)
+  if (missileSpeed == 4)
   {
     writeToScreen("OFF", 465, 440, 1, 0, 0);
   }
@@ -200,13 +203,22 @@ void drawBackground()
   glPopMatrix();
 }
 
+void drawScore()
+{
+  glPushMatrix();
+  std::ostringstream tmp;
+  tmp << gameScore;
+  writeToScreen("Current score: " + tmp.str(), 10, 430, 1, 1, 1);
+  glPopMatrix();
+}
+
 void drawHealthBar()
 {
   glPushMatrix();
   // Workaround for to_string() error.
   // https://stackoverflow.com/a/12975966
   std::ostringstream tmp;
-  tmp << enemyHealth;
+  tmp << ROUNDF(enemyHealth, 100);
 
   writeToScreen("Enemy health: " + tmp.str() + "\%", 10, 450, 1, 1, 1);
   // The damage dealt (red base bar)
@@ -312,6 +324,9 @@ void drawEnemyDefender()
 
 void drawEnemy()
 {
+  if (enemyY < -50) // Enemy is currently respawning.
+    writeToScreen("Nice job, wait for it ...", 250, 250, 1, 1, 1);
+
   glColor3f(1, 0, 0);
   // Body //
   glPushMatrix();
@@ -379,7 +394,7 @@ void drawMissile()
   glVertex2f(missileX - 3, missileY + 10);
   glEnd();
   glBegin(GL_TRIANGLES);
-  glColor3f((missileSpeed == 3) ? 1 : 0, (missileSpeed == 3) ? 0 : 1, 0);
+  glColor3f((missileSpeed == 4) ? 1 : 0, (missileSpeed == 4) ? 0 : 1, 0);
   glVertex2f(missileX - 3, missileY + 10);
   glVertex2f(missileX + 5, missileY + 10);
   glVertex2f(missileX + 1, missileY + 18);
@@ -405,15 +420,19 @@ void drawMissile()
 
 void resetGame()
 {
-  spaceshipX = 200, spaceshipY = 70;
-  missileX = 0, missileY = -100;
-  enemyShotX = 0, enemyShotY = -100;
-  enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20;
+  gameOver = false;
+  gameScore = 0;
   bg1Y = 0;
   bg2Y = 0;
+  spaceshipX = 200, spaceshipY = 70, spaceshipRotation = 0;
+  missileX = 0, missileY = -100, missileSpeed = 4; // To be invisible by default
+  enemyShotX = 0, enemyShotY = -100;
+  enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20;
+  enemyDefenderX = -100, enemyDefenderY = 300, enemyDefenderShotX = 0, enemyDefenderShotY = -100;
   speedPowerUpX = 0, speedPowerUpY = -100, speedPowerUpTimer = 0;
-  playerSpeed = 4;
-  gameOver = false;
+  missileSpeedPowerUpX = 0, missileSpeedPowerUpY = -100, missileSpeedPowerUpTimer = 0;
+  playerSpeed = 5;
+  t = 0;
 }
 
 void onKey(unsigned char key, int x, int y)
@@ -541,16 +560,16 @@ void displayCallback(void)
     drawEnemyDefender();
     drawEnemyShot();
     drawHealthBar();
+    drawScore();
     drawPowerUps();
   }
   else
   {
-    if (enemyHealth <= 0)
-      writeToScreen("You WON !", 200, 170, 0, 0, 0);
-    else
-      writeToScreen("\\_(-.-)_/ You lost in a 2D game, misrable just like your life", 200, 170, 0, 0, 0);
-
-    writeToScreen("Press R to restart, Q to quit", 200, 200, 0, 0, 0);
+    std::ostringstream tmp;
+    tmp << gameScore;
+    writeToScreen("Playing a 2d game, how lifeless? \\_(-.-)_/", 150, 220, 0, 0, 0);
+    writeToScreen("Total score: " + tmp.str(), 150, 250, 0, 0, 0);
+    writeToScreen("Press R to restart, Q to quit", 150, 280, 0, 0, 0);
   }
 
   glFlush();
@@ -565,19 +584,19 @@ void handlePowerUpsCollision()
   {
     if (abs(missileSpeedPowerUpY - spaceshipY) < 20 && abs(missileSpeedPowerUpX - spaceshipX) < 40)
     {
-      missileSpeed = 6;
-      missileSpeedPowerUpTimer = 3 + rand() % 5;
+      missileSpeed = 7;
+      missileSpeedPowerUpTimer = 4 + rand() % 10;
       missileSpeedPowerUpY = -100;
     }
   }
 
-  if (missileSpeed != 3)
+  if (missileSpeed != 4)
   {
     missileSpeedPowerUpTimer -= 0.001;
     if (missileSpeedPowerUpTimer <= 0)
     {
       missileSpeedPowerUpTimer = 0;
-      missileSpeed = 3;
+      missileSpeed = 4;
     }
   }
 
@@ -591,13 +610,13 @@ void handlePowerUpsCollision()
     }
   }
 
-  if (playerSpeed != 4)
+  if (playerSpeed != 5)
   {
     speedPowerUpTimer -= 0.001;
     if (speedPowerUpTimer <= 0)
     {
       speedPowerUpTimer = 0;
-      playerSpeed = 4;
+      playerSpeed = 5;
     }
   }
 }
@@ -636,7 +655,12 @@ void handleEnemyMovement()
   }
 
   enemyX = point[0];
-  enemyY = point[1];
+  if (enemyY < -50) // Enemy is currently respawning
+  {
+    enemyY += 0.01;
+  }
+  else
+    enemyY = point[1];
 
   // Lock him to the borders.
   if (enemyX > 460)
@@ -695,9 +719,16 @@ void idleCallback()
     if (abs(missileY - enemyY) < enemyHEIGHT && abs(missileX - enemyX) < enemyWIDTH)
     {
       missileY = -100;
-      enemyHealth -= 10;
-      if (enemyHealth == 0)
-        gameOver = true;
+      double factorOfSpawns = (gameScore + 100) / 100;
+      enemyHealth -= 10 / factorOfSpawns;
+      gameScore += 10;
+      if (enemyHealth <= 0)
+      {
+        // The enemy is killed this way, and will be respawned
+        // when enemyY reaches -50 (in the handleMovement)
+        enemyY = -100;
+        enemyHealth = 100;
+      }
     }
     missileY += (missileSpeed / 10);
   }
