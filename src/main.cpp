@@ -405,12 +405,17 @@ void onKey(unsigned char key, int x, int y)
 void drawEnemyShot()
 {
   glPushMatrix();
-  glPointSize(8.0);
-  glBegin(GL_POINTS);
-  glColor3f(1, 0, 0);
+  glLineWidth(7.0);
+  glBegin(GL_LINES);
+  glColor3f(0, 0, 0);
   glVertex2f(enemyShotX, enemyShotY);
-  glColor3f(0, 0, 1);
-  glVertex2f(enemyShotX, enemyShotY + 10);
+  glVertex2f(enemyShotX, enemyShotY - 10);
+  glEnd();
+  glBegin(GL_TRIANGLES);
+  glColor3f(1, 1, 1);
+  glVertex2f(enemyShotX, enemyShotY);
+  glVertex2f(enemyShotX + 5, enemyShotY + 20);
+  glVertex2f(enemyShotX - 5, enemyShotY + 20);
   glEnd();
   glPopMatrix();
 }
@@ -503,7 +508,7 @@ void handlePowerUpsCollision()
   {
     if (abs(speedPowerUpY - spaceshipY) < 20 && abs(speedPowerUpX - spaceshipX) < 40)
     {
-      playerSpeed = 4 + rand() % 10;
+      playerSpeed = 10;
       speedPowerUpTimer = 5 + rand() % 10;
       speedPowerUpY = -100;
     }
@@ -622,7 +627,7 @@ void idleCallback()
 
   if (enemyShotY > 0)
   {
-    enemyShotY -= 0.1;
+    enemyShotY -= 0.2;
     if (abs(enemyShotY - spaceshipY) < 10)
     {
       if (abs(enemyShotX - spaceshipX) < 20)
