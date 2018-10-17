@@ -440,14 +440,14 @@ void onKey(unsigned char key, int x, int y)
   switch (key)
   {
   case 'a':
-    if (spaceshipX > 40)
+    if (spaceshipX > 20)
     {
       spaceshipRotation = 15;
       spaceshipX -= playerSpeed;
     }
     break;
   case 'd':
-    if (spaceshipX < 460)
+    if (spaceshipX < 480)
     {
       spaceshipRotation = -15;
       spaceshipX += playerSpeed;
