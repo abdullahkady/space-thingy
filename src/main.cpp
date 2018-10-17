@@ -54,6 +54,32 @@ void writeToScreen(std::string text, float x, float y, float r, float g, float b
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
 }
 
+void weirdCircleFailureShape(float cx, float cy, float r)
+{
+  glBegin(GL_LINE_LOOP);
+  for (int i = 0; i < 10; i++)
+  {
+    float theta = 2.0f * 3.1415926f * float(i) / 10;
+    float x = r * cosf(theta);
+    float y = r * sinf(theta);
+    glVertex2f(x + cx, y + cy);
+  }
+  glEnd();
+}
+
+void actualKindOfCircle(float cx, float cy, float r)
+{
+  glBegin(GL_TRIANGLE_FAN);
+  for (int i = 0; i < 15; i++)
+  {
+    float theta = 2.0f * 3.1415926f * float(i) / 15;
+    float x = r * cosf(theta);
+    float y = r * sinf(theta);
+    glVertex2f(x + cx, y + cy);
+  }
+  glEnd();
+}
+
 void drawPowerUpStatus()
 {
   if (playerSpeed == 4)
@@ -71,11 +97,8 @@ void drawPowerUps()
   // Speeds the player movement with a random factor, for a random period.
   // Thrusts turn green during boost time
   glPushMatrix();
-  glPointSize(10.0);
   glColor3f(0, 1, 0);
-  glBegin(GL_POINTS);
-  glVertex2f(speedPowerUpX, speedPowerUpY);
-  glEnd();
+  weirdCircleFailureShape(speedPowerUpX, speedPowerUpY, 5);
   glPopMatrix();
 
   drawPowerUpStatus();
@@ -493,7 +516,7 @@ void displayCallback(void)
     if (enemyHealth <= 0)
       writeToScreen("You WON !", 200, 170, 0, 0, 0);
     else
-      writeToScreen("You lost in a 2D game, misrable just like your life", 200, 170, 0, 0, 0);
+      writeToScreen("\\_(-.-)_/ You lost in a 2D game, misrable just like your life", 200, 170, 0, 0, 0);
 
     writeToScreen("Press R to restart, Q to quit", 200, 200, 0, 0, 0);
   }
