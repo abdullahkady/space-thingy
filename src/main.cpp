@@ -21,9 +21,9 @@ double spaceshipX = 200, spaceshipY = 70, spaceshipRotation = 0;
 double missileX = 0, missileY = -100; // To be invisible by default
 double enemyShotX = 0, enemyShotY = -100;
 double enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20;
+double enemyDefenderX = -100, enemyDefenderY = 300, enemyDefenderShotX = 0, enemyDefenderShotY = -100;
 double speedPowerUpX = 0, speedPowerUpY = -100, speedPowerUpTimer = 0;
 double playerSpeed = 4;
-bool enemyIsHit = false;
 //----------------
 
 // BEZIER //
@@ -211,6 +211,20 @@ void drawSpaceship()
   glPopMatrix();
 }
 
+void drawEnemyDefender()
+{
+  glPushMatrix();
+  glColor3f(0, 0, 0);
+  glBegin(GL_TRIANGLE_FAN);
+  glVertex2f(enemyDefenderX, enemyDefenderY);
+  glVertex2f(enemyDefenderX + 20, enemyDefenderY + 30);
+  glVertex2f(enemyDefenderX - 25, enemyDefenderY - 20);
+  glVertex2f(enemyDefenderX + 30, enemyDefenderY + 20);
+  glVertex2f(enemyDefenderX - 10, enemyDefenderY + 25);
+  glEnd();
+  glPopMatrix();
+}
+
 void drawEnemy()
 {
   glColor3f(1, 0, 0);
@@ -310,7 +324,6 @@ void resetGame()
   missileX = 0, missileY = -100;
   enemyShotX = 0, enemyShotY = -100;
   enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20;
-  enemyIsHit = false;
   bg1Y = 0;
   bg2Y = 0;
   speedPowerUpX = 0, speedPowerUpY = -100, speedPowerUpTimer = 0;
@@ -383,6 +396,13 @@ void powerUpInterval(int val)
   glutTimerFunc((rand() % 10) * 1000, powerUpInterval, 0);
 }
 
+void enemyDefenderInterval(int val)
+{
+  if (enemyDefenderX == -100)
+    enemyDefenderX = 0;
+  glutTimerFunc((rand() % 5) * 1000, enemyDefenderInterval, 0);
+}
+
 void enemyShotInterval(int val)
 {
 
@@ -403,8 +423,9 @@ int main(int argc, char **argr)
   glutDisplayFunc(displayCallback);
   glutKeyboardFunc(onKey);
   glutIdleFunc(idleCallback);
-  glutTimerFunc(2000, enemyShotInterval, 0);
+  glutTimerFunc(1000, enemyShotInterval, 0);
   glutTimerFunc(2000, powerUpInterval, 0);
+  glutTimerFunc(2000, enemyDefenderInterval, 0);
   glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
   gluOrtho2D(0.0, 500.0, 0.0, 500.0);
   glutMainLoop();
@@ -420,6 +441,7 @@ void displayCallback(void)
     drawSpaceship();
     drawMissile();
     drawEnemy();
+    drawEnemyDefender();
     drawEnemyShot();
     drawHealthBar();
     drawPowerUps();
@@ -504,9 +526,30 @@ void handleEnemyMovement()
     enemyX = 20;
 }
 
+void handleEnemyDefender()
+{
+  // MOVEMENT //
+  if (enemyDefenderX > 450)
+    enemyDefenderX = -100;
+  if (enemyDefenderX != -100)
+    enemyDefenderX += 0.15;
+  // MOVEMENT //
+
+  // SHOTS BLOCKING //
+  if (missileY > 0)
+  {
+    if (abs(missileY - enemyDefenderY) < 20 && abs(missileX - enemyDefenderX) < 35)
+    {
+      missileY = -100;
+    }
+  }
+  // SHOTS BLOCKING //
+}
+
 void idleCallback()
 {
   handlePowerUpsCollision();
+  handleEnemyDefender();
 
   bg1Y = (bg1Y >= 500) ? 0 : bg1Y + 0.1;
   bg2Y = (bg2Y >= 500) ? 0 : bg2Y + 0.1;
@@ -519,18 +562,10 @@ void idleCallback()
   {
     if (abs(missileY - enemyY) < enemyHEIGHT && abs(missileX - enemyX) < enemyWIDTH)
     {
-      if (!enemyIsHit)
-      {
-        missileY = -100;
-        enemyIsHit = true;
-        enemyHealth -= 10;
-        if (enemyHealth == 0)
-          gameOver = true;
-      }
-    }
-    else
-    {
-      enemyIsHit = false;
+      missileY = -100;
+      enemyHealth -= 10;
+      if (enemyHealth == 0)
+        gameOver = true;
     }
     missileY += 0.3;
   }
