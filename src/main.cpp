@@ -104,7 +104,7 @@ void drawBackground()
 
   glPushMatrix();
   glTranslated(0, bg1Y, 0);
-  glColor3f(0.24, 0, 0.54);
+  glColor3f(0.16, 0.11, 0.24);
   glBegin(GL_QUADS);
   glVertex2f(0, 0);
   glVertex2f(800, 0);
@@ -115,7 +115,7 @@ void drawBackground()
 
   glPushMatrix();
   glTranslated(0, bg2Y, 0);
-  glColor3f(0.24, 0.24, 0.54);
+  glColor3f(0.11, 0.15, 0.24);
   glBegin(GL_QUADS);
   glVertex2f(0, -500);
   glVertex2f(800, -500);
