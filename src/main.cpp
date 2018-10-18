@@ -27,6 +27,7 @@ double spaceshipX = 200, spaceshipY = 70, spaceshipRotation = 0;
 double missileX = 0, missileY = -100, missileSpeed = 4; // To be invisible by default
 double enemyShotX = 0, enemyShotY = -100;
 double enemyX = 0, enemyY = 380, enemyHealth = 100, enemyWIDTH = 35, enemyHEIGHT = 20;
+double enemyRotation = -15;
 double enemyDefenderX = -100, enemyDefenderY = 300, enemyDefenderShotX = 0, enemyDefenderShotY = -100;
 double speedPowerUpX = 0, speedPowerUpY = -100, speedPowerUpTimer = 0;
 double missileSpeedPowerUpX = 0, missileSpeedPowerUpY = -100, missileSpeedPowerUpTimer = 0;
@@ -350,8 +351,13 @@ void drawEnemy()
 {
   if (enemyY < -50) // Enemy is currently respawning.
     writeToScreen("Nice job, wait for it ...", 170, 250, 1, 1, 1);
+  glPushMatrix();
 
+  glTranslatef(enemyX, enemyY, 0);
+  glRotatef(enemyRotation, 0, 0, 1);
+  glTranslatef(-enemyX, -enemyY, 0);
   glColor3f(1, 0, 0);
+
   // Body //
   glPushMatrix();
   glTranslated(enemyX, enemyY, 0);
@@ -403,6 +409,8 @@ void drawEnemy()
   glVertex2f(enemyX, enemyY + 10);
   glVertex2f(enemyX + 25, enemyY + 25);
   glEnd();
+  glPopMatrix();
+
   glPopMatrix();
 }
 
@@ -664,6 +672,7 @@ void handleEnemyMovement()
 
   if (t >= 1)
   {
+    enemyRotation = -enemyRotation;
     t = 0;
     p0[0] = p3[0];
     p0[1] = p3[1];
