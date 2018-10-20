@@ -286,11 +286,15 @@ void drawSpaceship()
   glEnd();
 
   // EXHAUST
-  glBegin(GL_POINTS);
-  // Color the exhaust dynamically dependong on boost state
+  glBegin(GL_TRIANGLES);
+  // Color the exhaust dynamically depending on boost state
   glColor3f(speedPowerUpTimer > 0 ? 0 : 1, speedPowerUpTimer > 0 ? 1 : 0, 0);
-  glVertex2f(spaceshipX - 10, spaceshipY - 30);
-  glVertex2f(spaceshipX + 10, spaceshipY - 30);
+  glVertex2f(spaceshipX - 8, spaceshipY - 25);
+  glVertex2f(spaceshipX - 18, spaceshipY - 25);
+  glVertex2f(spaceshipX - 13, spaceshipY - 45);
+  glVertex2f(spaceshipX + 8, spaceshipY - 25);
+  glVertex2f(spaceshipX + 18, spaceshipY - 25);
+  glVertex2f(spaceshipX + 13, spaceshipY - 45);
   glEnd();
 
   // WINGS
@@ -419,14 +423,14 @@ void drawMissile()
   glPushMatrix();
   glPointSize(10.0);
   glBegin(GL_QUADS);
-  glColor3f(0.8, 0.8, 0.8);
+  glColor3f((missileSpeed == 4) ? 0.8 : 0, (missileSpeed == 4) ? 0.8 : 1, (missileSpeed == 4) ? 0.8 : 0);
   glVertex2f(missileX - 3, missileY - 10);
   glVertex2f(missileX + 5, missileY - 10);
   glVertex2f(missileX + 5, missileY + 10);
   glVertex2f(missileX - 3, missileY + 10);
   glEnd();
   glBegin(GL_TRIANGLES);
-  glColor3f((missileSpeed == 4) ? 1 : 0, (missileSpeed == 4) ? 0 : 1, 0);
+  glColor3f(1, 0, 0);
   glVertex2f(missileX - 3, missileY + 10);
   glVertex2f(missileX + 5, missileY + 10);
   glVertex2f(missileX + 1, missileY + 18);
