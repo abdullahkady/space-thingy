@@ -614,9 +614,9 @@ void displayCallback(void)
   {
     std::ostringstream tmp;
     tmp << gameScore;
-    writeToScreen("Playing a 2d game, how lifeless? \\_(-.-)_/", 150, 220, 0, 0, 0);
+    writeToScreen("You lost! :(", 150, 280, 0, 0, 0);
     writeToScreen("Total score: " + tmp.str(), 150, 250, 0, 0, 0);
-    writeToScreen("Press R to restart, Q to quit", 150, 280, 0, 0, 0);
+    writeToScreen("Press R to restart, Q to quit", 150, 220, 0, 0, 0);
   }
 
   glFlush();
