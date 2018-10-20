@@ -300,16 +300,16 @@ void drawSpaceship()
   // WINGS
   glBegin(GL_TRIANGLES);
   glColor3f(0.2, 0.8, 0.2);
-  glVertex2f(spaceshipX + 25, spaceshipY + 25);
   glVertex2f(spaceshipX + 25, spaceshipY - 25);
-  glVertex2f(spaceshipX + 45, spaceshipY - 35);
+  glVertex2f(spaceshipX + 25, spaceshipY + 25);
+  glVertex2f(spaceshipX + 45, spaceshipY + 35);
   glEnd();
 
   glBegin(GL_TRIANGLES);
   glColor3f(0.2, 0.8, 0.2);
-  glVertex2f(spaceshipX - 25, spaceshipY + 25);
   glVertex2f(spaceshipX - 25, spaceshipY - 25);
-  glVertex2f(spaceshipX - 45, spaceshipY - 35);
+  glVertex2f(spaceshipX - 25, spaceshipY + 25);
+  glVertex2f(spaceshipX - 45, spaceshipY + 35);
   glEnd();
 
   // UPPER BODY
@@ -629,7 +629,7 @@ void handlePowerUpsCollision()
 
   if (missileSpeedPowerUpY != -100)
   {
-    if (abs(missileSpeedPowerUpY - spaceshipY) < 20 && abs(missileSpeedPowerUpX - spaceshipX) < 40)
+    if (abs(missileSpeedPowerUpY - spaceshipY) < 20 && abs(missileSpeedPowerUpX - spaceshipX) < 30)
     {
       missileSpeed = 7;
       missileSpeedPowerUpTimer = 4 + rand() % 10;
@@ -649,7 +649,7 @@ void handlePowerUpsCollision()
 
   if (speedPowerUpY != -100)
   {
-    if (abs(speedPowerUpY - spaceshipY) < 20 && abs(speedPowerUpX - spaceshipX) < 40)
+    if (abs(speedPowerUpY - spaceshipY) < 20 && abs(speedPowerUpX - spaceshipX) < 30)
     {
       playerSpeed = 10;
       speedPowerUpTimer = 5 + rand() % 10;
@@ -742,7 +742,7 @@ void handleEnemyDefender()
     enemyDefenderShotY -= 0.15;
     if (abs(enemyDefenderShotY - spaceshipY) < 10)
     {
-      if (abs(enemyDefenderShotX - spaceshipX) < 20)
+      if (abs(enemyDefenderShotX - spaceshipX) < 25)
         gameOver = true;
     }
   }
@@ -800,7 +800,7 @@ void idleCallback()
     enemyShotY -= 0.2;
     if (abs(enemyShotY - spaceshipY) < 10)
     {
-      if (abs(enemyShotX - spaceshipX) < 20)
+      if (abs(enemyShotX - spaceshipX) < 25)
         gameOver = true;
     }
   }
