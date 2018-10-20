@@ -533,12 +533,12 @@ void dropTheBall() // Classic .. ¯\_(ツ)_/¯
 
 void powerUpInterval(int val)
 {
-  if ((rand() % 30) > 15 && speedPowerUpY == -100 && speedPowerUpTimer <= 0)
+  if ((rand() % 40) > 35 && speedPowerUpY == -100 && speedPowerUpTimer <= 0)
   {
     speedPowerUpX = 150 + rand() % 300;
     speedPowerUpY = 450;
   }
-  if ((rand() % 35) < 15 && missileSpeedPowerUpY == -100 && missileSpeedPowerUpTimer <= 0)
+  if ((rand() % 50) < 5 && missileSpeedPowerUpY == -100 && missileSpeedPowerUpTimer <= 0)
   {
     missileSpeedPowerUpX = 150 + rand() % 300;
     missileSpeedPowerUpY = 450;
